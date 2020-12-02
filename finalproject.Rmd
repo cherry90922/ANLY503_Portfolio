@@ -73,7 +73,7 @@ From this F1 circuit map, we can see that over the 70 years of F1, it started re
 
 
 ### Exploratory graph: a brief introduction into Formula 1
-```{r Exploratory graph 1, fig.align='left', message = FALSE, warning = FALSE, echo = F, results = T}
+```{r Exploratory graph 1, fig.align='left', message = FALSE, include=FALSE, warning = FALSE, echo = F, results = F}
 f1 <- f1 %>%
   mutate_at('season', as.integer) %>%
   mutate_at('points', as.numeric)
@@ -118,6 +118,10 @@ ggplot(constructors_champions_total_point, aes(x = factor(name, level = c('Ferra
 ggsave("total_constructor_champion.png", width=16, height=8, dpi=300)
 ```
 
+```{r, fig.align='center', message = FALSE, warning = FALSE, echo = F, results = T}
+knitr::include_graphics('total_constructor_champion.png')
+```
+
 In Formula 1, there are two types of championships. One is the constructors' championship, which was first awarded for F1 Manufacturers in 1958. Each team has 2 drivers and each driver gets some points depending on where he finishes in the race, and the points drivers earn will be points added to both the constructors' championship and drivers' championship. After around 20 races per year, the team that earn most points from both drivers is the world constructors' champion and the driver that earn most points is the world drivers' champion.  
   
 There are a total of 208 teams that competed in Formula 1, and only 16 of them have won one or more constructors' championship, so less then 10% shows the level of difficulty of being number 1 out of all teams. As we can see from the graph indicated by the bars, being the team that have won 17 constructors championships before, Ferrari is definitely one of the most successful F1 team in the field. The line chart shows the total points earned by each team from all the races they've raced in, not only the races in the year(s) they won the constructors' championship, some teams raced in fewer years but won more championships so they may have fewer points than teams with fewer constructors' championship.  
@@ -125,7 +129,7 @@ There are a total of 208 teams that competed in Formula 1, and only 16 of them h
 You may wonder why I used similar colors for some teams, the colors are actually the team color. Each team has its own unique color and I went through a lot of pictures to get them, and indeed many teams use similar colors.
 
 
-```{r Exploratory graph 2, message = FALSE, warning = FALSE, echo = F, results = T}
+```{r Exploratory graph 2, message = FALSE, warning = FALSE, echo = F, results = F, include=FALSE}
 drivers_championship_data <- read.csv("data/drivers_championship_1950-2020.csv", colClasses=c("NULL",NA,NA,NA,NA,NA,NA,NA)) # "NULL" (note the quotes!) means skip the column, NA means that R chooses the appropriate data type for that column.
 drivers_championship <- drivers_championship_data %>%
   filter(Position == 1) %>%
@@ -160,11 +164,14 @@ ggplot(drivers_championship, aes(x = Name)) +
   # coord_flip()
 # save the graph to a picture
 ggsave("total_driver_champion.png", width=40, height=8, dpi=300)
-?theme
 ```
 
-Similar to the constructors championship, only the selected few have ever won a driver's championship during their years in Formula 1. The driver's championship started earlier than the constructors' championship in 1950. Out of all the drivers, Lewis Hamilton and Michael Schumacher are the most successful ones, each winning 7 titles. Lewis Hamilton just won his 7th title this year and in his peak (which is scary to think about considering he's been in this sport for more than 13 years and already won 7 titles) so it's very likely that he will beat Michael's record next year. Due to Hamilton's dominance over the years, only 2 drivers' that have won the driver's championship other than Hamilton are still active on the field, which is very rare considering in the 1950's there were usually more than 5 driver's champions in the field. 
+```{r, fig.align='center', message = FALSE, warning = FALSE, echo = F, results = T}
+knitr::include_graphics('total_driver_champion.png')
+```
 
+
+Similar to the constructors championship, only the selected few have ever won a driver's championship during their years in Formula 1. The driver's championship started earlier than the constructors' championship in 1950. Out of all the drivers, Lewis Hamilton and Michael Schumacher are the most successful ones, each winning 7 titles. Lewis Hamilton just won his 7th title this year and in his peak (which is scary to think about considering he's been in this sport for more than 13 years and already won 7 titles) so it's very likely that he will beat Michael's record next year. Due to Hamilton's dominance over the years, only 2 drivers' that have won the driver's championship other than Hamilton are still active on the field, which is very rare considering in the 1950's there were usually more than 5 driver's champions in the field. 
 
 
 ### Network graph: drivers & teams
