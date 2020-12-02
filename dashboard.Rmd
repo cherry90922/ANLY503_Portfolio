@@ -1,0 +1,49 @@
+---
+title: "ANLY503 Final Project Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+All you need to know about Formula 1 {.tabset}
+------------------
+### Most Successful Teams in Formula 1 History
+
+```{r, fig.align='center', fig.height = 20, message = FALSE, warning = FALSE, echo = F, results = T}
+knitr::include_graphics('total_constructor_champion.png') # out.width='25%', 
+```
+
+
+### Most Successful Drivers in Formula 1 History
+```{r, fig.align='center', fig.height = 20, message = FALSE, warning = FALSE, echo = F, results = T}
+knitr::include_graphics('total_driver_champion.png') # out.width='25%', 
+```
+
+
+### Formula 1 Circuits
+```{r, fig.align='center', message = FALSE, warning = FALSE, echo = F, results = T}
+knitr::include_graphics('f1_circuit_map.gif') # out.width='25%', 
+```
+
+### Pre-season testing
+
+```{r, out.width='100%', fig.align='center', , message = FALSE, warning = FALSE, echo = F, results = T}
+knitr::include_graphics("pre-season_testing_laptime.png")
+```
+
+### Sentiment Analysis
+
+```{r, fig.align='center', message = FALSE, warning = FALSE, echo = F, results = T}
+htmltools::includeHTML("driver_radar_chart.html")
+```
+
+### Drivers & Teams
+```{r, fig.align='center', message = FALSE, warning = FALSE, echo = F, results = T}
+htmltools::includeHTML("drivers_teams_network.html")
+```
+
+

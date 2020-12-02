@@ -1,5 +1,36 @@
 ---
-title: "About This Website"
+title: "About Final Project"
 ---
 
-More about this website.
+Below are the datasets I used for ANLY 503 final project. Also I referenced some graphs listed in references, but I created all the code from scratch.  
+  
+A brief introduction into other pages. On page Dashboard, you will see selected graphs that analyze different aspects of Formula 1. On page More Graphs & Discussions, you will find more graphs and detailed discussions about each graph.  
+
+### datasets:
+1. https://www.sportsvizsunday.com/formula-1  
+2. https://www.kaggle.com/coolcat/f1-create-dataset-data-exploration-with-altair/data  
+3. https://docs.google.com/spreadsheets/d/1jV78bjqXD-Or56VYapcJnjumq8qrTd3ciG1tRGfW7e0/edit#gid=1442127586  
+4. https://www.reddit.com/r/formula1/comments/f7zsns/2020_f1_preseason_test_full_timing_data_sectors/  
+5. https://www.kaggle.com/aadiltajani/fia-f1-19502019-data?select=Spain2020_Q2_LapbyLap.csv  
+6. https://www.fia.com/news/f1-2019-italian-grand-prix-saturday-press-conference-transcript  
+7. https://www.racefans.net/2019/09/07/analysis-drivers-team-radio-transcripts-reveal-how-f1s-qualifying-shambles-unfolded/  
+8. Circuit coordinates: http://mccabism.blogspot.com/2009/11/latitude-and-longitude-of-f1.html  
+
+### references:  
+1. https://www.kaggle.com/jonathanbouchet/f1-data-analysis  
+2. https://www.kaggle.com/coolcat/f1-create-dataset-data-exploration-with-altair  
+3. https://twitter.com/sportschord  
+4. https://public.tableau.com/profile/sports.chord#!/  
+5. https://medium.com/nightingale/formula-1-2020-sports-viz-sunday-data-challenge-45fe6f54507a  
+6. https://towardsdatascience.com/formula-1-grand-prix-analysis-d05d73b1e79c  
+7. https://www.reddit.com/r/formula1/comments/f7w4kf/glimpses_on_teams_performance_after_the_first/  
+8. https://www.reddit.com/r/formula1/comments/f7zsns/2020_f1_preseason_test_full_timing_data_sectors/  
+9. https://rstudio-pubs-static.s3.amazonaws.com/276999_042092be8e31414f82ef4f41e31fe5c8.html  
+10. https://public.tableau.com/profile/sports.chord#!/  
+11. https://rstudio-pubs-static.s3.amazonaws.com/276999_042092be8e31414f82ef4f41e31fe5c8.html  
+12. https://www.reddit.com/r/formula1/comments/insubh/oc_data_visualization_of_the_2020_italian_grand/  
+
+
+
+
+
