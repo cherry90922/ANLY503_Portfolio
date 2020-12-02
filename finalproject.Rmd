@@ -37,19 +37,24 @@ f1_circuit_sf %>% glimpse()
 
 data("World")
 tmap_mode("view")
-f1_circuit_map <- tm_shape(World) +
-  tm_style("col_blind") +
-  tm_polygons(style = "pretty", col = "MAP_COLORS") + # col = "MAP_COLORS"
-  tm_compass(position = c("left", "bottom"))+
-  tm_scale_bar(position = c("left", "bottom"))+
-  tm_shape(f1_circuit_sf) +
-  tm_dots(size = 0.5, col = "red", labels = 'circuitName')+#, id = "label", # bold in popup
-          #popup.vars = c("season", "circuitName")) +  #tm_dots + # light in popup) +palette = "BuGn"
-  tm_layout(main.title = "F1 circuits in the world from 1950-2019", bg.color = "grey", frame = FALSE, title.position= c("right", "top")) +
-  tm_facets(along = 'season', free.coords = F)
-  # tm_text(text = "circuitName", size = 1, auto.placement=T) # remove.overlap = TRUE
+# f1_circuit_map <- tm_shape(World) +
+#   tm_style("col_blind") +
+#   tm_polygons(style = "pretty", col = "MAP_COLORS") + # col = "MAP_COLORS"
+#   tm_compass(position = c("left", "bottom"))+
+#   tm_scale_bar(position = c("left", "bottom"))+
+#   tm_shape(f1_circuit_sf) +
+#   tm_dots(size = 0.5, col = "red", labels = 'circuitName')+#, id = "label", # bold in popup
+#           #popup.vars = c("season", "circuitName")) +  #tm_dots + # light in popup) +palette = "BuGn"
+#   tm_layout(main.title = "F1 circuits in the world from 1950-2019", bg.color = "white", frame = FALSE, title.position= c("right", "top")) +
+#   tm_facets(along = 'season', free.coords = F)
+#   # tm_text(text = "circuitName", size = 1, auto.placement=T) # remove.overlap = TRUE
 
-tmap_animation(f1_circuit_map, filename = 'f1_circuit_map.gif', delay=25)
+f1_circuit_map = tm_shape(World) + tm_polygons(col = "MAP_COLORS") + 
+  tm_shape(f1_circuit_sf) + tm_dots(size = 0.5, col = "red", labels = 'circuitName') +
+  tm_layout(bg.color = "white", frame = FALSE)+
+  tm_facets(along = "season", free.coords = FALSE)
+
+tmap_animation(f1_circuit_map, filename = 'f1_circuit_map.gif', delay=100, restart.delay = 200)
 
 # top 10 most raced circuits by F1
 top_10_circuits <- f1 %>% group_by(circuitName) %>%
@@ -102,10 +107,15 @@ ggplot(constructors_champions_total_point, aes(x = factor(name, level = c('Ferra
   scale_y_continuous(limits = c(0,20), sec.axis = sec_axis(~.*500, name = "Total points")) +
   labs(x="Constructors that have won >= 1 championship", y="Total constructors champions", title='Total championships and total points each constructor won from 1958-2019') +
   theme_bw() +
-  coord_flip()
+  theme(axis.text.x = element_text(color = "grey20", size = 14),
+        axis.text.y = element_text(color = "grey20", size = 16),  
+        axis.title.x = element_text(color = "black", size = 20),
+        axis.title.y = element_text(color = "black", size = 20),
+        plot.title = element_text(color = "black", size = 26),
+        plot.margin = unit(c(0, 0, 0, 0), "cm"))
 
 # save the graph to a picture
-ggsave("total_constructor_champion.png", width=5, height=8, dpi=300)
+ggsave("total_constructor_champion.png", width=16, height=8, dpi=300)
 ```
 
 In Formula 1, there are two types of championships. One is the constructors' championship, which was first awarded for F1 Manufacturers in 1958. Each team has 2 drivers and each driver gets some points depending on where he finishes in the race, and the points drivers earn will be points added to both the constructors' championship and drivers' championship. After around 20 races per year, the team that earn most points from both drivers is the world constructors' champion and the driver that earn most points is the world drivers' champion.  
@@ -136,15 +146,21 @@ drivers_championship <- drivers_championship %>%
 ggplot(drivers_championship, aes(x = Name)) + 
   geom_bar(aes(y = Total_Drivers_Championship), stat="identity",size = 1, fill = "lightblue") + 
   geom_line(aes(y = Total_Points/500), stat="identity",size = 1, color="orange", group = 1) + #the second axis is originally the same as the main axis, /400 then *400 to make the second axis work
-  geom_text(aes(label=Total_Drivers_Championship, x=Name, y=Total_Drivers_Championship), colour="black")+ 
+  geom_text(aes(label=Total_Drivers_Championship, x=Name, y=Total_Drivers_Championship), colour="black", size = 12)+ 
   # geom_text(aes(label=total_points, x=name, y=total_points), colour="red")+ 
   scale_y_continuous(limits = c(0,8), sec.axis = sec_axis(~.*500, name = "Total points")) +
   labs(x="Drivers that have won >= 1 championship", y="Total drivers championship", title='Total championships and total points each driver won from 1950-2019') +
   theme_bw() +
-  coord_flip()
-
+  theme(axis.text.x = element_text(color = "grey20", size = 14),
+        axis.text.y = element_text(color = "grey20", size = 16),  
+        axis.title.x = element_text(color = "black", size = 20),
+        axis.title.y = element_text(color = "black", size = 20),
+        plot.title = element_text(color = "black", size = 26),
+        plot.margin = unit(c(0, 0, 0, 0), "cm")) #top, right, bottom, left)
+  # coord_flip()
 # save the graph to a picture
-ggsave("total_driver_champion.png", width=8, height=20, dpi=300)
+ggsave("total_driver_champion.png", width=40, height=8, dpi=300)
+?theme
 ```
 
 Similar to the constructors championship, only the selected few have ever won a driver's championship during their years in Formula 1. The driver's championship started earlier than the constructors' championship in 1950. Out of all the drivers, Lewis Hamilton and Michael Schumacher are the most successful ones, each winning 7 titles. Lewis Hamilton just won his 7th title this year and in his peak (which is scary to think about considering he's been in this sport for more than 13 years and already won 7 titles) so it's very likely that he will beat Michael's record next year. Due to Hamilton's dominance over the years, only 2 drivers' that have won the driver's championship other than Hamilton are still active on the field, which is very rare considering in the 1950's there were usually more than 5 driver's champions in the field. 
@@ -155,12 +171,16 @@ Similar to the constructors championship, only the selected few have ever won a 
 ```{r drivers & teams, message = FALSE, warning = FALSE, echo = F, results = T}
 # 2 network graphs:
 # 1. drivers, team and number of seasons a driver stays at the team
+
 num_seasons <- f1 %>%
   select(season, name, `Full Name`) %>%
   unique() %>%
   group_by(`Full Name`, name) %>%
   summarise(Num_Seasons = n()) %>%
   rename('driver' = `Full Name`, 'team' = name)
+
+
+drivers_championship
 
 tot_points_w_team <- f1 %>%
   select(season, points, name, `Full Name`) %>%
@@ -170,7 +190,8 @@ tot_points_w_team <- f1 %>%
   rename('driver' = `Full Name`, 'team' = name)
 
 drivers_teams <- num_seasons %>%
-  left_join(tot_points_w_team, by = c('driver', 'team'))
+  # left_join(tot_points_w_team, by = c('driver', 'team')) %>%
+  inner_join(drivers_championship[,1], by = c("driver" = "Name"))
 
 library(networkD3)
 
@@ -186,11 +207,11 @@ links <- data.frame(source = match(drivers_teams$driver, node_names) - 1,
 
 network_graph <- sankeyNetwork(Links = links, Nodes = nodes, Source = "source", 
               Target = "target", Value = "Before_value", NodeID = "name", 
-              units = "season(s)", fontSize = 12, nodeWidth = 30, height = 10000, width = 500, 
+              units = "season(s)", fontSize = 11, nodeWidth = 30, height = 800, width = 600, 
               margin = NULL, NodeGroup = "name")
 
 # add a title to the graph
-network_graph <- htmlwidgets::prependContent(network_graph, htmltools::tags$h1("Number of seasons a driver stays at a team"))
+network_graph <- htmlwidgets::prependContent(network_graph, htmltools::tags$h1("Number of seasons a world champion stays at a team"))
 # sankey <- htmlwidgets::appendContent(sankey, htmltools::tags$p("Caption"))
 network_graph
 
@@ -239,9 +260,10 @@ ts <- ggplot(test, aes(x = `Date+time`, y = lapsecs, group = driver)) +
         # panel.grid.major.x = element_line(colour = "grey", size=0.1),
         panel.grid.major = element_blank(), # remove gridlines & plot borders
         panel.grid.minor = element_blank(),
-        panel.border = element_blank()) + 
+        panel.border = element_blank(),
+        text = element_text(size=12)) + 
   facet_grid(driver~.) + 
-  geom_text(data=test[which.min(test$lapsecs),], label="Fastest Lap Time 1:16.196",vjust=-1, colour = "white") # label the fastest lap set by BOT
+  geom_text(data=test[which.min(test$lapsecs),], label="Fastest Lap Time 1:16.196",vjust=-1, colour = "white")# label the fastest lap set by BOT
   # scale_size_identity()
   # annotation_custom(img, -Inf, Inf, -Inf, Inf) # insert a pic as background
 

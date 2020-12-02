@@ -9,7 +9,7 @@ navbar:
       href: about.html
     - text: "Final Project Dashboard"
       href: dashboard.html
-    - text: "More Graphs & Discussions"
+    - text: "All Graphs & Discussions"
       href: finalproject.html
 output:
   html_document:
