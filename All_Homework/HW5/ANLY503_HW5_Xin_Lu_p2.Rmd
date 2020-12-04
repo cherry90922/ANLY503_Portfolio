@@ -1,0 +1,148 @@
+---
+title: "ANLY503_HW5_Xin_Lu_p2"
+author: "Xin"
+date: "10/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+2. What is the distribution of all loans and what are their characteristics?
+There are 6 columns related to loans, loan_date, loan_amount, loan_payment, loan_term, loan_status and loan_default. I will look at each column individually and some columns collectively and create graphs shown below to illustrate my findings.  
+
+```{r read data}
+library(tidyverse)
+# install.packages("naniar")
+library(naniar)
+accounts <- read_csv("data/accounts_analytical.csv")
+accounts %>% glimpse()
+
+transactions <- read_csv("data/transactions.csv")
+transactions %>% glimpse()
+```
+
+
+```{r}
+# na.omit(accounts) %>% select(loan_amount, loan_payment)
+```
+
+2.1 First I look at if the general situation with loans, such as how many loans in total, if all accounts have loans or only a few accounts have loans. We can tell from the graph below that the majority of accounts (`r round(length(which(is.na(accounts$loan_date)))/length(accounts$loan_date),2)`) don't have loans, represented by the missing value percentage of column loan_date.  
+```{r}
+gg_miss_var(accounts, show_pct=T) + # show_pct=T shows proportion of missing
+  labs(y = "Percentage of missing values") +
+  ylim(0,100) +
+  theme_bw()
+```
+
+2.2 Next I look at loan_date and see if there is any general trend, like loans are increasing over the years, and if there is any seasonality, such as there is more loans applied/approved in April each year etc.  
+We can see from the graph below that the total loan_amount increases from 1993 to 1998, but there is no obvious seasonal trend identified. Total loan amounts can vary significantly from month to month in some year (y.1997), and sometimes they are pretty steady throughout the year (y.1995)  
+
+```{r}
+library(scales)
+ggplot(
+  data = accounts,
+  mapping = aes(
+    x = format(accounts$loan_date, "%m"),
+    y = loan_amount
+  )
+) +
+  geom_bar(stat = "identity")+
+  # scale_x_date(labels = date_format("%Y")) + 
+  facet_wrap(~format(accounts$loan_date, "%Y"), scales=("free_x")) + 
+  theme_bw() +
+  labs(x="Month", y="loan_amount")
+  
+```
+
+2.3 Thirdly I look at loan_payment, its overall distributions and percentage of loans paid. From the first graph, which shows the loan_payment of each account with a scatter plot, the distribution of loan_payment is scattered around without any discernible patterns. The range of loan_payment is between 0-10,000.  
+From the second graph, which shows the percentage of loan paid by account, we can see there are only 5 percentages, well below 10%, meaning all accounts only paid less than 10% of their total loan, which is a bit weird.  
+
+```{r}
+# since account_id is not sequential and there are some skipped account numbers, which can be misleading
+# a new sequential id is generated to show loan distribution of each account.
+accounts$id <- seq.int(nrow(accounts))
+
+# 1st graph: shows loan_payment of each account using scatter plot
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),],
+  mapping = aes(
+    x = id,
+    y = loan_payment
+  )
+) +
+  geom_point()+
+  labs(x="each account", y="loan_payment",
+       title = 'loan_payment of each account')
+
+# second graph
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),],
+  mapping = aes(
+    x = id,
+    y = loan_payment/loan_amount
+  )
+) +
+  geom_point()+
+  labs(x="each account", y="loan_payment", title = '% of loan paid') +
+  ylim(0,0.1)
+```
+
+2.4 Next I look at loan_term and its distributions. Per graph 1, which shows count of loan_term, we can see each loan_term is very balanced, there are about the same number of accounts in each category of loan_terms. Per graph 2, which shows sum of loan_amount per loan_term, illustrates that the longer the loan term, the bigger the loan amount. It makes sense because longer terms usually means customers are getting a bigger loan so they can even out the payment each month.  
+
+```{r}
+# graph 1:
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = factor(loan_term)), 
+    fill = color
+) +
+  geom_bar()+
+  # scale_x_date(labels = date_format("%Y")) + 
+  #facet_wrap(~loan_term) + 
+  theme_bw() +
+  labs(x="loan_term", y="count(account_id)", title = 'count of loan_term')
+
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = factor(loan_term), 
+    y = loan_amount
+)) +
+  stat_summary(fun.y = sum, geom = 'bar')+
+  theme_bw() +
+  labs(x="loan_term", y="sum(loan_amount)", title = 'sum of loan_amount per loan_term')
+```
+
+2.5 Onto loan_status, from the graph below we can see most loans are current, almost double the size of expired loans.  
+
+```{r}
+# graph 1:
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = loan_status
+)) +
+  geom_bar()+
+  # scale_x_date(labels = date_format("%Y")) + 
+  #facet_wrap(~loan_term) + 
+  theme_bw() +
+  labs(x="loan_status", y="count(account_id)", title = 'count of loan_status')
+```
+
+2.6 Finally onto loan_default. It's a good sign that the majority of loans are not default and only a small proportionf of loans are dafault.  
+```{r}
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = loan_default
+)) +
+  geom_bar()+
+  # scale_x_date(labels = date_format("%Y")) + 
+  #facet_wrap(~loan_term) + 
+  theme_bw() +
+  labs(x="loan_default", y="count(account_id)", title = 'count of loan_default')
+```
+

@@ -1,0 +1,125 @@
+---
+title: "ANLY503_HW7_Xin_Lu"
+author: "Xin"
+date: "11/4/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(igraph)
+library('edgebundleR')
+```
+
+You will need to extract the data in the form of a data frame with 3 columns: source, target and count; the last column will contain the numbers of people who migrated from the source state to the target state in 2018.
+
+```{r data prep, warning=FALSE}
+raw <- readxl::read_xls("data/State_to_State_Migrations_Table_2018.xls", skip = 6, col_names = T)
+
+migrations <- 
+  raw %>%
+  select(1,Alabama:Wyoming) %>% # only keep state-level info
+  row_to_names(row_number = 1) %>% # make the first row into new headers
+  clean_names() %>%
+  select(1, starts_with('Estimate')) %>%
+  filter(!is.na(.)) %>%
+  filter(na != "Current residence in" & na != 'United States2') %>%
+  # filter_all(any_vars(!is.na(.))) %>% # only remove rows with NA in ALL columns
+  slice(1:(n()-10)) %>% # delete the last 10 rows, which is puerto ricko & footnotes
+  #column_to_rownames(var='na') %>%
+  #rownames_to_column(var = "rowname") %>% # convert rowname into a column
+  pivot_longer(-na) %>% 
+  # this and next step is to transpose the matrix because source & target states should be switched
+  pivot_wider(names_from = na, values_from = value)
+
+# set the row names=column names, which are 51 state names
+migrations <- migrations %>%
+  column_to_rownames(var='name')
+row.names(migrations) <- colnames(migrations)
+
+
+# convert every column except the row name column into a numeric
+# note that row name is treated as a column if not specified not to be converted
+migrations <- data.frame(lapply(migrations, function(x) as.numeric(as.character(x))),
+                   check.names=F, row.names = rownames(migrations))
+
+# this is an adjacent matrix now, show all 51 states
+# head(migrations, 51)
+
+# now convert the adjacent matrix into an edge list
+# migrations %>%
+#   rownames_to_column(var = "rowname") %>% # convert rowname into a column
+#   rename(target=rowname) %>%
+#   pivot_longer(names_to = "source", values_to = "count", c(Alabama:Wyoming)) %>%
+#   filter(source %in% c("New York", "Texas", "Washington", "Virginia"))
+
+
+migrations_nx <- migrations %>%
+  rownames_to_column() %>% # convert rowname into a column
+  rename(source=rowname) %>%
+  pivot_longer(names_to = "target", values_to = "count", c(Alabama:Wyoming)) %>%
+  filter(source %in% c("New York", "Texas", "Washington", "Virginia")) %>%
+  group_by(source) %>% 
+  arrange(desc(count)) %>%
+  slice(1:10) # last 3 rows to choose the top 10 targets that each of the 4 states moved to
+
+# states is the node list, which should be source & target put together and remove duplicates
+states <- unique(c(as.character(migrations_nx$source), as.character(migrations_nx$target)))
+migrations_nx %>% head(40)
+```
+
+You can now use this data frame to create a graph object using igraph (R or Python), tidygraph (R) or networkx (Python).  
+You will create a single network graph, where the width of each edge representing the number of people moving between the two states, the color of the edge denoting the state of origin, and preferably arrows denoting the direction of migration. These aspects are required. You can style other aspects of the graph as you choose to improve readability.
+```{r network graph, warning=FALSE}
+set.seed(1)
+
+network <- graph_from_data_frame(d=migrations_nx, vertices = states, directed = T)
+network <- simplify(network, remove.multiple = F, remove.loops = T)
+
+# assign the 4 origin states to the same color
+V(network)[1:4]$color="pink"
+# V(network)["Texas"]$color="pink"
+# V(network)["Virginia"]$color="pink"
+# V(network)["Washington"]$color="pink"
+
+# assign the rest of states to a different color
+V(network)[5:24]$color="skyblue"
+
+
+# E(network)[1:10]$color=rainbow(6)[1]
+# E(network)[11:20]$color=rainbow(6)[2]
+# E(network)[21:30]$color=rainbow(6)[3]
+# E(network)[31:40]$color=rainbow(6)[4]
+
+
+# similarly, assign the edges starting with the same origin state to the same color
+edge.start <- ends(network, es=E(network), names=F)[,1]
+
+par(mar=c(0,0,0,0))
+plot(network, 
+     layout=layout.circle, 
+     # === vertex
+     #vertex.color = rainbow(6)[1+(V(network)=="male")],          # Node color
+     vertex.frame.color = "white",                 # Node border color
+     vertex.shape="circle",                        # One of “none”, “circle”, “square”, “csquare”, “rectangle” “crectangle”, “vrectangle”, “pie”, “raster”, or “sphere”
+     vertex.size=10,                               # Size of the node (default is 15)
+     vertex.size2=NA,                              # The second size of the node (e.g. for a rectangle)
+    
+     # === Edge
+     edge.color=rainbow(4)[edge.start],
+     edge.arrow.size=0.5, # Arrow size, defaults to 1
+     edge.arrow.width=1,
+     edge.width = E(network)$count/10000,
+     edge.lty=c("solid"),
+     edge.curved=0.3,
+     main="Top 10 States that NY, VA, WA & TX People Moved to in 2018")
+
+
+#edgebundle(network, directed = T)
+```
+Discussion:  
+First let me explain the plot. The node color pink means the state is one of the 4 origin states. Each origin has a unique edge color connecting the origin state with the destination state. The thicker the edge is, the more people migrated from the origin state to the destination state. 
+
+From the plot we can see most people don't move long distance, such as the state that most people moved to from NY is New Jersey. However, over 6,000 people moved from Washington to Virginia in 2018, which is one of the longest distance of all the people moved. I am very confident that this number will only be increasing over the next few years considering Amazon chose Northern Virginia as its HQ2 in 2019 and is expanding the office. DMV people mentioned this change when I was renewing my driver's license. Another observation I have is that it seems more people are moving out of NY than moving in. Based on the 4 states I chose and top 10 states people migrated to from those states, 200,000+ people migrated from New York to other states, yet only fewer than 10,000 people migrated into NY in 2018. I wonder if that has anything to do with the high cost of living, high living pressure etc. On the other hand, California is definitely one of the hottest places for people to migrated to.

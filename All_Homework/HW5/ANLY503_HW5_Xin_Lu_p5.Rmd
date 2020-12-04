@@ -1,0 +1,68 @@
+---
+title: "ANLY503_HW5_Xin_Lu_p5"
+author: "Xin"
+date: "10/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+5. Explore the validity of the data for the case whether or not an account has a credit card and whether or not they have associated credit card transactions. Is there anything worth noting?
+
+```{r data read & prep}
+library(tidyverse)
+accounts <- read_csv("data/accounts_analytical.csv")
+transactions <- read_csv("data/transactions.csv")
+# for this task we only need to look at all credit card related variables plus account_id
+# update na in credit_cards to 0 & 1, meaning the account has no credit card (0) and has credit card (1)
+# I don't care about how many credit cards they have
+accounts <- accounts %>% 
+  select(c(account_id, credit_cards, starts_with("debit_credit_card"))) %>%
+  mutate(credit_cards = ifelse(is.na(credit_cards), 0, 1))
+         
+# add a sequential ID to replace account_id
+accounts$id = seq.int(nrow(accounts))
+
+accounts$credit_cards = as.character(accounts$credit_cards)
+
+accounts %>% glimpse()
+```
+
+One things that's worth noting from all three graphs below is that many accounts that don't have associated credit cards have debit transactions from credit cards. Some of those transactions have a very high dollar amount and are very frequent.  
+```{r}
+ggplot(accounts, aes(x = id, y = debit_credit_card_other_txn_ct, color = credit_cards))+
+  geom_point() + 
+  labs(x = 'account_id',
+       y = 'credit card transaction count',
+       title = "Whether an account has a credit card and the account's credit card transactions") +
+  theme_bw()
+
+ggplot(accounts, aes(x = id, y = debit_credit_card_other_avg_txn, color = credit_cards))+
+  geom_point() + 
+  labs(x = 'account_id',
+       y = 'average credit card transaction amount',
+       title = "Whether an account has a credit card and the account's average credit card transaction amount") +
+  theme_bw()
+```
+
+In order to find our why, I join the transactions and accounts together because transactions have details on the method. I want to make sure these transactions are indeed credit card transactions and are not mistakes coming from transactions into accounts. So I extracted all the accounts that don't have a credit card but have credit transactions, and find those account_id in transactions to see if there are transactions with method='credit card'. And there are quite a few transactions.
+
+```{r}
+account_wo_credit_cards <- accounts %>%
+  filter(credit_cards == '0' & !is.na(debit_credit_card_other_txn_ct)) %>%
+  inner_join(transactions, by='account_id') %>%
+  filter(method == 'credit card')
+```
+
+From the graph below, we can see there are quite a few cases when an account don't have any credit cards yet have many credit card related transactions. Why this is happening is beyond my understanding. I can't think of any reason other than there is a mistake categorizing the credit card transactions. Maybe some transactions are not credit card associated transactions but in the system somehow are categorized as credit card transactions. Or those accounts actually have credit cards with other banks but the system in this bank does not know that so it still thinks these accounts have no credit cards. Otherwise it wouldn't be so many cases.
+```{r}
+ggplot(account_wo_credit_cards, aes(x = account_id, y = amount))+
+  geom_point() + 
+  labs(x = 'account_id',
+       y = 'credit card transaction amount',
+       title = "Credit card transactions for accounts that don't have a credit card") +
+  theme_bw()
+```
+
