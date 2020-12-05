@@ -1,7 +1,12 @@
 ---
 title: "About Final Project"
 ---
-
+In this ANLY 503 Portfolio, there are mainly 2 parts in the portfolio.  
+  
+The first part is all the homework I created for ANLY503 (page Homework 4 & Homework 6, Homework 5,  Homework 7), which includes coding/visualization exercise for data wrangling (HW4 & HW5), data analysis (HW5), geospatial graph, and network graph (HW7). All the data used and graphs genereated are included in their individual folders on github: https://github.com/cherry90922/ANLY503_Portfolio.  
+    
+The second part is the final project about Formula 1, which has a dashboard (page Final Project Dashboard) and a more complete story on page All Graphs & Discussions. There are two main .Rmd used to create all of my graphs in the final project: finalproject.Rmd/.html has all the code, and dashboard.Rmd/.html rendered selected graphs generated from finalproject.Rmd/.html into a `flexdashboard`. The data used in the final project is in the folder **data** on github: : https://github.com/cherry90922/ANLY503_Portfolio.    
+  
 Below are the datasets I used for ANLY 503 final project. Also I referenced some graphs listed in references, but I created all the code from scratch.  
   
 A brief introduction into other pages. On page Dashboard, you will see selected graphs that analyze different aspects of Formula 1. On page All Graphs & Discussions, you will find all graphs and detailed discussions about each graph.  

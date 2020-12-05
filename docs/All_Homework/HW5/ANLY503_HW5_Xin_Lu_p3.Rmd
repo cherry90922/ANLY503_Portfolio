@@ -1,0 +1,65 @@
+---
+title: "ANLY503_HW5_Xin_Lu_p3"
+author: "Xin"
+date: "10/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+3. Is there a relationship between a good or bad loan and the time between an account is opened and the loan is created? Is there a specific set of accounts that seem to be at higher or lower risk of defaulting?
+
+```{r}
+library(tidyverse)
+# install.packages("naniar")
+accounts <- read_csv("data/accounts_analytical.csv")
+
+
+# for this task we only need to look at 1. accounts that have a loan and 2. all loan related variables plus account_id
+accounts <- accounts %>% 
+  filter(!is.na(loan_date)) %>%
+  select(c(account_id, acct_creation_date, loan_date, loan_amount, loan_payment, loan_term, loan_status, loan_default))
+
+# create a new variable to calculate the time difference between loan created date and account open date
+# although loan default may not be related to neither acct_creation_date nor loan_date, 
+# it may be related to the difference of the 2
+accounts$time_diff_acct_loan <- accounts$loan_date - accounts$acct_creation_date
+
+accounts %>% glimpse()
+
+# transactions <- read_csv("data/transactions.csv")
+# transactions %>% glimpse()
+```
+
+To find out if there is a relationship between a good or bad loan and the time between an account is opened and the loan is created, I need to perform a bivariate relations, which is looking at the relationship between 2 numeric variables through scatter plots.  
+From the scatter plot we can see there isn't a very obvious relationship between the 3 variables, because the dots of good and bad loans are almost even distributed on both sides of the line. It's not like the default loans are more concentrated on loans that were opened early which would then yield a steeper line than the line now.  
+Then I look at the relationship between variable loan_default and time_diff_acct_loan, which is the time difference between loan created date and account open date. Although loan default may not be related to neither acct_creation_date nor loan_date, it may be related to the difference of the 2. From the boxplot below, we can see that the default loans tend to have a shorter time difference than the loans that are not in default. But the difference is very subtle and I don't think it's significant.  
+```{r}
+# Bivariate relations
+ggplot(accounts, aes(x = acct_creation_date, y = loan_date, color = loan_default))+
+  geom_point() + 
+  geom_smooth() +
+  labs(title = "Relationship between loan_default & the time between an account is opened and the loan is created") +
+  theme_bw()
+
+# Relating a continuous to a categorical variable
+ggplot(accounts, aes(x = loan_default, y = time_diff_acct_loan))+
+  geom_boxplot()+
+  labs(title="Relationship between loan_default & the time difference between an account is opened and the loan is created")
+```
+
+Since there is no significant relationship between loan default, acct_creation_date, loan_date or time_diff_acct_loan, I move on to other finding relationships between loan default and other loan related variables that can be used to determine what accounts that seem to be at higher or lower risk of defaulting.  
+I plotted all of the rest of loan related variables against loan default with both scatterplots and boxplots, and finally found 2 variables that seem to have a strong relationship with laon default, and that are loan_amount and loan_payment. Let me explain with loan_amount. From the graph below, we can see default loans have a higher amount than non-default loans, so the accounts with a higher amount tend to have a high risk of default.
+```{r}
+ggplot(accounts, aes(x = loan_default, y = loan_amount))+
+  geom_boxplot() + 
+  labs(title = "Relationship between loan_default & loan_amount")
+```
+
+
+
+
+
+

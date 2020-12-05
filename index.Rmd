@@ -4,4 +4,4 @@ title: "Xin Lu's Website"
 
 Hello everyone!  
   
-Welcome to my website! Currently this website only has content of the final project for ANLY 503, but I will update it often in the future. Before you read go into details on page Dashboard, please read page About first, which will give you a better sense of navigating this website. Hope you enjoy it!
+Welcome to my website! Currently this website only has content of the homework and final project for ANLY 503, but I will update it often in the future. Before you read go into details on page Dashboard, please read page About first, which will give you a better sense of navigating this website. Hope you enjoy it!

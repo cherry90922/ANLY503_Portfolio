@@ -1,0 +1,103 @@
+---
+title: "ANLY503_HW5_Xin_Lu_p1"
+author: "Xin Lu"
+date: "10/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Explore all accounts. Create visualizations that combine all these account characteristics:
++ Whether an account has a credit card or not
++ Whether an account has a loan or not
++ The average balance for the account
+
+```{r read data}
+library(tidyverse)
+# install.packages("naniar")
+library(naniar)
+library(dplyr)
+accounts <- read_csv("data/accounts_analytical.csv")
+# accounts %>% glimpse()
+
+transactions <- read_csv("data/transactions.csv")
+# transactions %>% glimpse()
+```
+
+### Data preparation
+Data preparation before visualizations, which includes 3 steps: create a column to indicate the loan & credit card status of an account, calculate the average balance per account, and create a sequential id
+```{r data prep}
+# create a column to indicate the loan & credit card status of an account:
+# whether the accounts has both credit_cards & loans, has either loans or credit cards, and has neither
+accounts$has_credit_cards_loans = NULL
+accounts <- accounts %>%
+  mutate(has_credit_cards_loans = ifelse(is.na(credit_cards) & is.na(loan_date), "Neither", 
+                                         ifelse(is.na(credit_cards) & !is.na(loan_date), "has_loans", 
+                                                ifelse(!is.na(credit_cards) & is.na(loan_date), "has_credit_card", "Both"))))
+
+# average balance per account, assuming it's asking average balance for all the transactions per account:
+# summing all the balances per account divided by total number of transactions
+accounts <- transactions %>% 
+  group_by(account_id) %>%
+  summarize(avg_balance = mean(balance, na.rm = TRUE)) %>%
+  right_join(accounts, by = 'account_id')
+
+# another way to calculate average
+# aggregate(transactions$balance,
+#           by = list(transactions$account_id),
+#           FUN = mean)
+
+# since account_id is not sequential and there are some skipped account numbers, which can be misleading
+# a new sequential id is generated to show loan distribution of each account.
+accounts$id <- seq.int(nrow(accounts))
+
+accounts %>% glimpse()
+```
+
+### Data visualization
+From the 1st graph, which shows the average balance per account per credit card & loan status, we can see credit cards were mainly issued to 2 groups of account id. It can be misunderstood as issuing many credit cards during a specific time period, which isn't because in the second graph, I plotted everything on acct_creation_date (credit card issue date is NA) and found out the credit card issuance is very even throughout the time. Also from the 1st graph, we can see there is no significant difference in account balance whether an account has credit cards, loans or not, although most accounts have neither credit cards nor or loans.
+```{r visualizations}
+# 1st graph
+ggplot(data = accounts,
+       mapping = aes(
+         x = id,
+         y = avg_balance
+       )) +
+  geom_point(
+    mapping = aes(color = has_credit_cards_loans),
+    size = 2,
+    show.legend = FALSE) +
+  facet_wrap(~has_credit_cards_loans) +
+  theme_bw() +
+  labs(x = 'account_id',
+       y = 'average balance',
+       title = "Account average balance per credit card & loan status",
+       subtitle = "4,500 accounts with loans from 1993 to 1998") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        strip.text = element_text(size = 12))
+
+# 2nd graph
+ggplot(data = accounts,
+       mapping = aes(
+         x = acct_creation_date,
+         y = avg_balance
+       )) +
+  geom_point(
+    mapping = aes(color = has_credit_cards_loans),
+    size = 2,
+    show.legend = FALSE) +
+  facet_wrap(~has_credit_cards_loans) +
+  theme_bw() +
+  labs(x = 'acct_creation_date',
+       y = 'average balance',
+       title = "Account average balance per credit card & loan status",
+       subtitle = "4,500 accounts with loans from 1993 to 1998") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        strip.text = element_text(size = 12))
+  
+```
+
