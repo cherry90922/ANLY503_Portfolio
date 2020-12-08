@@ -1,0 +1,326 @@
+---
+title: "HW4"
+author: "Xin"
+date: "12/8/2020"
+output: html_document
+---
+
+## loans
+```{r, message = FALSE, warning = FALSE, echo = T, results = T}
+# # You need to perform the tasks above in both R and Python. 
+# For each task above, you need to write scripts (*.R or *.py file) and output within this repository 
+# that read the source files using relative paths and produce the required output. 
+# For each task, you will procude four files: 2 script and 2 output for a total of 12 files:
+# # 
+# # loans.R, loans.py, loans_r.csv, loans_py.csv
+# # district.R, district.py, district_r.csv, district_py.csv
+# # customers.R, customers.py, customers_r.csv, customers_py.csv
+# 
+# # Since we realize that you may have a preference for a particular language, 
+#   you will tell us which language will receive 70% of the weight for this assignment. 
+# You still need to do the work in both languages. 
+# Create a single-line text file called language.txt in this repository where you will enter R or Python.
+# getwd()
+
+library(tidyverse)
+
+
+##############################################################################################################
+####################################### 1. Ingesting data ####################################################
+##############################################################################################################
+
+# loans.csv contains information about loans associated with accounts. 
+# Only one loan is allowed per account.
+loans <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/loans.csv")
+# head(loans)
+
+
+##############################################################################################################
+####################################### 2. Cleaning data #####################################################
+##############################################################################################################
+
+### 2.1 clean dataset: loans
+library(dplyr)
+# glimpse(loans)
+
+# convert pivot loan status columns and make them rows
+loans_r <- loans %>%
+  pivot_longer(cols = `24_A`:`60_A`, names_to = 'loan_info')
+
+# since one account only has one loan, delete repetitive accounts with no payment status info
+loans_r <- loans_r[!(loans_r$value=='-'),] 
+
+# write it in wrangling?
+# loans_r <- loans_r %>%
+#   filter(loans_r$value!='-')
+
+
+# separate loan_info into
+# * loan_term: The duration of loan in months, NA if none
+# * loan_status: The status of the loan (current or expired), NA if none
+# * loan_default: T/F if the loan is in default, or NA if none
+
+# A stands for an expired loan that was paid in full
+# B stands for an expired loan that was not paid in full (it was in default)
+# C stands for a current loan where all payments are being made
+# D stands for a current loan in default due to not all payments being made
+
+loans_r <- loans_r %>%
+  separate(loan_info, 
+           into = c("loan_term", "loan_other"),
+           sep = "_") 
+
+# add two new columns to fill in extracted values with
+loans_r$loan_status = NA
+loans_r$loan_default = NA
+
+for (i in 1:nrow(loans_r)){
+  if (loans_r$loan_other[i] == 'A'){
+    loans_r$loan_status[i] = 'expired'
+    loans_r$loan_default[i] = 'F'
+  } else if (loans_r$loan_other[i] == 'B'){
+    loans_r$loan_status[i] = 'expired'
+    loans_r$loan_default[i] = 'T'
+  } else if (loans_r$loan_other[i] == 'C'){
+    loans_r$loan_status[i] = 'current'
+    loans_r$loan_default[i] = 'F'
+  }
+  else{
+    loans_r$loan_status[i] = 'current'
+    loans_r$loan_default[i] = 'T'
+  }
+}
+
+
+# delete columns value & loan_other which are not useful anymore
+# loans_r$value <- NULL
+# loans_r$loan_other <- NULL
+
+loans_r <- loans_r %>%
+  select(-c(value, loan_other))
+
+glimpse(loans_r)
+
+# write.csv(loans_r, 'loans_r.csv')
+```
+
+
+## districts
+```{r, message = FALSE, warning = FALSE, echo = T, results = T}
+##############################################################################################################
+####################################### 1. Ingesting data ####################################################
+##############################################################################################################
+# districts.csv contains demographic information and characteristics 
+# about the districts where customers and branches are located.
+districts <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/districts.csv")
+
+
+##############################################################################################################
+####################################### 2. Cleaning data #####################################################
+##############################################################################################################
+
+### 2.2 clean dataset: districts
+#glimpse(districts)
+
+
+num_col = c("Population500", "Population500to1999", "Population2000to9999", "Population10000",
+            "unemployment_rate_1995", "unemployment_rate_1996",
+            "commited_crimes_1995", "commited_crimes_1996")
+
+# separate values in columns $municipality_info, $unemployment_rate, $commited_crimes into different columns
+districts_r <- districts %>%
+  separate(municipality_info,
+           into = c("Population500", "Population500to1999", "Population2000to9999", "Population10000"),
+           sep = ",") %>%
+  separate(unemployment_rate,
+           into = c("unemployment_rate_1995", "unemployment_rate_1996"),
+           sep = ",") %>%
+  separate(commited_crimes,
+           into = c("commited_crimes_1995", "commited_crimes_1996"),
+           sep = ",") %>%
+  # below comment is to replace [ in a single column, 
+  # but mutate_all & replace_all replace [ in the entire dataframe
+  #mutate(Population500 = str_replace(Population500, "\\[", "")) %>%
+  #mutate(Population500 = str_replace(Population500, "\\[", ""))
+  mutate_all(funs(str_replace_all(., "\\[", ""))) %>%
+  mutate_all(funs(str_replace_all(., "\\]", "")))
+  # convert strings into numeric, but not time consuming, using sapply instead
+  # mutate(Population500 <- as.numeric(Population500)) %>%
+  # mutate(Population500to1999 <- as.numeric(Population500to1999)) %>%
+  # mutate(Population2000to9999 <- as.numeric(Population2000to9999)) %>%
+  # mutate(Population10000 <- as.numeric(Population10000)) %>%
+  # mutate(unemployment_rate_1995 <- as.numeric(unemployment_rate_1995)) %>%
+  # mutate(unemployment_rate_1996 <- as.numeric(unemployment_rate_1996)) %>%
+  # mutate(commited_crimes_1995 <- as.numeric(commited_crimes_1995)) %>%
+  # mutate(commited_crimes_1996 <- as.numeric(commited_crimes_1996))
+
+  # convert strings into numeric
+districts_r[num_col] <- sapply(districts_r[num_col],as.numeric)
+sapply(districts_r, class)
+
+districts_r %>% glimpse()
+
+# remove [ & ] by replacing it with blank
+# below works on a single column
+# districts_r$Population500 <- gsub("\\[", "", districts_r$Population500)
+
+# write.csv(districts_r, "districts_r.csv")
+```
+
+
+## customers
+```{r, message = FALSE, warning = FALSE, echo = T, results = T}
+##############################################################################################################
+####################################### 1. Ingesting data ####################################################
+##############################################################################################################
+
+# accounts contains information about the bank's accounts.
+accounts <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/accounts.csv")
+#head(accounts)
+
+# clients contain information about the bank's customers. A client (customer) can have several accounts.
+clients <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/clients.csv")
+#head(clients)
+
+# links contains information that links customers to accounts, 
+# and whether a customer is the owner or a user in a given account.
+links <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/links.csv")
+#head(links)
+
+# transactions contains all of the bank's transactions.
+transactions <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/transactions.csv")
+# head(transactions)
+
+# payment_orders contains information about orders for payments to other banks via bank transfers. 
+# A customer issues an order for payment and the bank executes the payment. 
+# These payments should also be reflected in the transactions.csv data as debits.
+payment_orders <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/payment_orders.csv")
+# head(payment_orders)
+
+# cards contains information about credit cards issued to clients. 
+# Accounts can have more than one credit card.
+cards <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/cards.csv")
+# head(cards)
+
+# loans contains information about loans associated with accounts. 
+# Only one loan is allowed per account.
+loans <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/results/loans_r.csv")
+loans <- loans %>%
+  select(-X1)
+# head(loans)
+
+# districts contains demographic information and characteristics about the districts 
+# where customers and branches are located.
+districts <- read_csv("/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/results/districts_r.csv")
+districts <- districts %>%
+  select(-X1)
+# head(districts)
+
+
+##############################################################################################################
+####################################### 2. Cleaning data #####################################################
+##############################################################################################################
+
+# Build an analytical dataset by combining (joining) the data from the different tables as you see fit, 
+# which will be used for the purposes of exploratory data analysis, visualization and reporting. 
+# The unit of analysis is the account. 
+# This dataset must contain the following information for each account using the following field names:
+# 
+# account_id: Account number      <- accounts.id
+# open_date: Date when account was opened     <- accounts.date
+# statement_frequency: The frequency that statements are generated for the account   
+# <- accounts.statement_frequency
+
+# district_name: Name of the district where the account is     
+# <- districts.name, accounts.district_id = districts_r.id
+# create a new df that has everything in accounts, and only district name from districts
+# accounts left joins districts on accounts.district_id = districts_r.id
+
+customers <- accounts %>%
+  left_join(districts[, c("id", "name")], by = c("district_id" = "id")) %>%
+  rename(district_name = name) %>%
+  select(-district_id)
+
+
+# num_customers: The total number of clients associated with the account (owner and users) 
+# <- count(links.client_id) accounts.id = links.account_id
+
+customers <- links %>%
+  count(account_id, name = "num_customers") %>% # group_by account_id and count total clients
+  right_join(customers, by = c("account_id"="id"))
+
+
+# credit_cards: Number of credit cards for an account or zero if none  
+# <- count(cards.id) cards.link_id = links.id, links.account_id = accounts.id
+# note links need to be joined as well
+customers <- links %>%
+  inner_join(cards, by=c("id" = "link_id")) %>%
+  count(account_id, name = "credit_cards") %>% #group_by account_id and count total clients
+  right_join(customers, by="account_id") %>%
+  mutate(credit_cards = ifelse(is.na(credit_cards), 0, credit_cards))
+
+
+# to replace NA with 0 in the entire df, use either of below 2 options:
+# customers[is.na(customers$credit_cards)] <- 0
+# df %>% mutate_each( funs_( interp( ~replace(., is.na(.),0) ) ) )
+
+# loan: T/F if the account has a loan  
+# <- accounts.id = loans_r.id
+# assume loans.id is the account_id
+# since loan does not exist in any df 
+# need to create a new column loan, which will depend on values in other columns in loans df
+customers$loan = NA
+
+# loan_amount: The amount of the loan if there is one, NA if none  <- loans.amount, accounts.id = loans_r.id
+# loan_payments: The amount of the loan payment if there is one, NA if none   <- loans.payments, accounts.id = loans_r.id
+# loan_term: The duration of loan in months, NA if none  <- 
+# loan_status: The status of the loan (current or expired), NA if none
+# loan_default: T/F if the loan is in default, or NA if none
+customers <- customers %>%
+  left_join(loans[, c("account_id", "amount", "payments", "loan_term", "loan_status", "loan_default")], by = "account_id") %>%
+  rename(loan_amount = amount, loan_payments = payments, open_date = date) %>% # rename column names, note its new_name=old_name, not the other way around
+  mutate(loan = ifelse(is.na(loan_amount), "F", "T")) # fill values into new column loan
+
+
+# max_withdrawal: Maximum amount withdrawn for the account
+# min_withdrawal: Minimum amount withdrawn for the account
+
+# transactions %>%
+#   select(account_id, type, amount) %>%
+#   group_by(account_id, type) %>%
+#   filter(type == 'credit', amount == max(amount)) %>%
+#   glimpse()
+# 
+# transactions %>%
+#   select(account_id, type, amount) %>%
+#   group_by(account_id, type) %>%
+#   slice(type == 'credit', which.max(amount)) %>%
+#   glimpse()
+
+customers <- transactions %>% 
+  filter(type == 'debit') %>% # debit == withdrawl
+  group_by(account_id) %>%
+  summarize(min_withdrawal = min(amount), max_withdrawal = max(amount)) %>%
+  right_join(customers, by="account_id")
+
+# transactions %>% glimpse()
+# cc_payments: Count of credit payments for the account for all cards
+customers <- transactions %>%
+  filter(type=='credit') %>%
+  count(account_id, name = "cc_payments") %>%
+  right_join(customers, by="account_id")
+
+# max_balance: Maximum balance in the account
+# min_balance: Minimum balance in the account
+customers <- transactions %>%
+  group_by(account_id) %>%
+  summarize(min_balance = min(balance), max_balance = max(balance)) %>%
+  right_join(customers, by="account_id")
+
+customers %>% glimpse()
+
+# save the result as a csv
+# write.csv(customers, "customers_r.csv")
+
+```
+

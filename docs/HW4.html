@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xin" />
+
+
+<title>HW4</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Xin Lu's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="dashboard.html">Final Project Dashboard</a>
+</li>
+<li>
+  <a href="finalproject.html">All Graphs &amp; Discussions</a>
+</li>
+<li>
+  <a href="HW4.html">Homework 4</a>
+</li>
+<li>
+  <a href="ANLY503_HW5_Xin_Lu.html">Homework 5</a>
+</li>
+<li>
+  <a href="networks.html">Homework 7</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">HW4</h1>
+<h4 class="author">Xin</h4>
+<h4 class="date">12/8/2020</h4>
+
+</div>
+
+
+<div id="loans" class="section level2">
+<h2>loans</h2>
+<pre class="r"><code># # You need to perform the tasks above in both R and Python. 
+# For each task above, you need to write scripts (*.R or *.py file) and output within this repository 
+# that read the source files using relative paths and produce the required output. 
+# For each task, you will procude four files: 2 script and 2 output for a total of 12 files:
+# # 
+# # loans.R, loans.py, loans_r.csv, loans_py.csv
+# # district.R, district.py, district_r.csv, district_py.csv
+# # customers.R, customers.py, customers_r.csv, customers_py.csv
+# 
+# # Since we realize that you may have a preference for a particular language, 
+#   you will tell us which language will receive 70% of the weight for this assignment. 
+# You still need to do the work in both languages. 
+# Create a single-line text file called language.txt in this repository where you will enter R or Python.
+# getwd()
+
+library(tidyverse)
+
+
+##############################################################################################################
+####################################### 1. Ingesting data ####################################################
+##############################################################################################################
+
+# loans.csv contains information about loans associated with accounts. 
+# Only one loan is allowed per account.
+loans &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/loans.csv&quot;)
+# head(loans)
+
+
+##############################################################################################################
+####################################### 2. Cleaning data #####################################################
+##############################################################################################################
+
+### 2.1 clean dataset: loans
+library(dplyr)
+# glimpse(loans)
+
+# convert pivot loan status columns and make them rows
+loans_r &lt;- loans %&gt;%
+  pivot_longer(cols = `24_A`:`60_A`, names_to = &#39;loan_info&#39;)
+
+# since one account only has one loan, delete repetitive accounts with no payment status info
+loans_r &lt;- loans_r[!(loans_r$value==&#39;-&#39;),] 
+
+# write it in wrangling?
+# loans_r &lt;- loans_r %&gt;%
+#   filter(loans_r$value!=&#39;-&#39;)
+
+
+# separate loan_info into
+# * loan_term: The duration of loan in months, NA if none
+# * loan_status: The status of the loan (current or expired), NA if none
+# * loan_default: T/F if the loan is in default, or NA if none
+
+# A stands for an expired loan that was paid in full
+# B stands for an expired loan that was not paid in full (it was in default)
+# C stands for a current loan where all payments are being made
+# D stands for a current loan in default due to not all payments being made
+
+loans_r &lt;- loans_r %&gt;%
+  separate(loan_info, 
+           into = c(&quot;loan_term&quot;, &quot;loan_other&quot;),
+           sep = &quot;_&quot;) 
+
+# add two new columns to fill in extracted values with
+loans_r$loan_status = NA
+loans_r$loan_default = NA
+
+for (i in 1:nrow(loans_r)){
+  if (loans_r$loan_other[i] == &#39;A&#39;){
+    loans_r$loan_status[i] = &#39;expired&#39;
+    loans_r$loan_default[i] = &#39;F&#39;
+  } else if (loans_r$loan_other[i] == &#39;B&#39;){
+    loans_r$loan_status[i] = &#39;expired&#39;
+    loans_r$loan_default[i] = &#39;T&#39;
+  } else if (loans_r$loan_other[i] == &#39;C&#39;){
+    loans_r$loan_status[i] = &#39;current&#39;
+    loans_r$loan_default[i] = &#39;F&#39;
+  }
+  else{
+    loans_r$loan_status[i] = &#39;current&#39;
+    loans_r$loan_default[i] = &#39;T&#39;
+  }
+}
+
+
+# delete columns value &amp; loan_other which are not useful anymore
+# loans_r$value &lt;- NULL
+# loans_r$loan_other &lt;- NULL
+
+loans_r &lt;- loans_r %&gt;%
+  select(-c(value, loan_other))
+
+glimpse(loans_r)</code></pre>
+<pre><code>## Rows: 682
+## Columns: 8
+## $ id           &lt;dbl&gt; 4959, 4961, 4962, 4967, 4968, 4973, 4986, 4988, 4989, 49…
+## $ account_id   &lt;dbl&gt; 2, 19, 25, 37, 38, 67, 97, 103, 105, 110, 132, 173, 176,…
+## $ date         &lt;date&gt; 1994-01-05, 1996-04-29, 1997-12-08, 1998-10-14, 1998-04…
+## $ amount       &lt;dbl&gt; 80952, 30276, 30276, 318480, 110736, 165960, 102876, 265…
+## $ payments     &lt;dbl&gt; 3373, 2523, 2523, 5308, 2307, 6915, 8573, 7370, 7348, 45…
+## $ loan_term    &lt;chr&gt; &quot;24&quot;, &quot;12&quot;, &quot;12&quot;, &quot;60&quot;, &quot;48&quot;, &quot;24&quot;, &quot;12&quot;, &quot;36&quot;, &quot;48&quot;, &quot;3…
+## $ loan_status  &lt;chr&gt; &quot;expired&quot;, &quot;expired&quot;, &quot;expired&quot;, &quot;current&quot;, &quot;current&quot;, &quot;…
+## $ loan_default &lt;chr&gt; &quot;F&quot;, &quot;T&quot;, &quot;F&quot;, &quot;T&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;T&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;…</code></pre>
+<pre class="r"><code># write.csv(loans_r, &#39;loans_r.csv&#39;)</code></pre>
+</div>
+<div id="districts" class="section level2">
+<h2>districts</h2>
+<pre class="r"><code>##############################################################################################################
+####################################### 1. Ingesting data ####################################################
+##############################################################################################################
+# districts.csv contains demographic information and characteristics 
+# about the districts where customers and branches are located.
+districts &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/districts.csv&quot;)
+
+
+##############################################################################################################
+####################################### 2. Cleaning data #####################################################
+##############################################################################################################
+
+### 2.2 clean dataset: districts
+#glimpse(districts)
+
+
+num_col = c(&quot;Population500&quot;, &quot;Population500to1999&quot;, &quot;Population2000to9999&quot;, &quot;Population10000&quot;,
+            &quot;unemployment_rate_1995&quot;, &quot;unemployment_rate_1996&quot;,
+            &quot;commited_crimes_1995&quot;, &quot;commited_crimes_1996&quot;)
+
+# separate values in columns $municipality_info, $unemployment_rate, $commited_crimes into different columns
+districts_r &lt;- districts %&gt;%
+  separate(municipality_info,
+           into = c(&quot;Population500&quot;, &quot;Population500to1999&quot;, &quot;Population2000to9999&quot;, &quot;Population10000&quot;),
+           sep = &quot;,&quot;) %&gt;%
+  separate(unemployment_rate,
+           into = c(&quot;unemployment_rate_1995&quot;, &quot;unemployment_rate_1996&quot;),
+           sep = &quot;,&quot;) %&gt;%
+  separate(commited_crimes,
+           into = c(&quot;commited_crimes_1995&quot;, &quot;commited_crimes_1996&quot;),
+           sep = &quot;,&quot;) %&gt;%
+  # below comment is to replace [ in a single column, 
+  # but mutate_all &amp; replace_all replace [ in the entire dataframe
+  #mutate(Population500 = str_replace(Population500, &quot;\\[&quot;, &quot;&quot;)) %&gt;%
+  #mutate(Population500 = str_replace(Population500, &quot;\\[&quot;, &quot;&quot;))
+  mutate_all(funs(str_replace_all(., &quot;\\[&quot;, &quot;&quot;))) %&gt;%
+  mutate_all(funs(str_replace_all(., &quot;\\]&quot;, &quot;&quot;)))
+  # convert strings into numeric, but not time consuming, using sapply instead
+  # mutate(Population500 &lt;- as.numeric(Population500)) %&gt;%
+  # mutate(Population500to1999 &lt;- as.numeric(Population500to1999)) %&gt;%
+  # mutate(Population2000to9999 &lt;- as.numeric(Population2000to9999)) %&gt;%
+  # mutate(Population10000 &lt;- as.numeric(Population10000)) %&gt;%
+  # mutate(unemployment_rate_1995 &lt;- as.numeric(unemployment_rate_1995)) %&gt;%
+  # mutate(unemployment_rate_1996 &lt;- as.numeric(unemployment_rate_1996)) %&gt;%
+  # mutate(commited_crimes_1995 &lt;- as.numeric(commited_crimes_1995)) %&gt;%
+  # mutate(commited_crimes_1996 &lt;- as.numeric(commited_crimes_1996))
+
+  # convert strings into numeric
+districts_r[num_col] &lt;- sapply(districts_r[num_col],as.numeric)
+sapply(districts_r, class)</code></pre>
+<pre><code>##                     id                   name                 region 
+##            &quot;character&quot;            &quot;character&quot;            &quot;character&quot; 
+##             population             num_cities            urban_ratio 
+##            &quot;character&quot;            &quot;character&quot;            &quot;character&quot; 
+##             avg_salary      entrepreneur_1000          Population500 
+##            &quot;character&quot;            &quot;character&quot;              &quot;numeric&quot; 
+##    Population500to1999   Population2000to9999        Population10000 
+##              &quot;numeric&quot;              &quot;numeric&quot;              &quot;numeric&quot; 
+## unemployment_rate_1995 unemployment_rate_1996   commited_crimes_1995 
+##              &quot;numeric&quot;              &quot;numeric&quot;              &quot;numeric&quot; 
+##   commited_crimes_1996 
+##              &quot;numeric&quot;</code></pre>
+<pre class="r"><code>districts_r %&gt;% glimpse()</code></pre>
+<pre><code>## Rows: 77
+## Columns: 16
+## $ id                     &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;…
+## $ name                   &lt;chr&gt; &quot;Hl.m. Praha&quot;, &quot;Benesov&quot;, &quot;Beroun&quot;, &quot;Kladno&quot;, …
+## $ region                 &lt;chr&gt; &quot;Prague&quot;, &quot;central Bohemia&quot;, &quot;central Bohemia&quot;…
+## $ population             &lt;chr&gt; &quot;1204953&quot;, &quot;88884&quot;, &quot;75232&quot;, &quot;149893&quot;, &quot;95616&quot;…
+## $ num_cities             &lt;chr&gt; &quot;1&quot;, &quot;5&quot;, &quot;5&quot;, &quot;6&quot;, &quot;6&quot;, &quot;4&quot;, &quot;6&quot;, &quot;8&quot;, &quot;6&quot;, &quot;…
+## $ urban_ratio            &lt;chr&gt; &quot;100&quot;, &quot;46.7&quot;, &quot;41.7&quot;, &quot;67.4&quot;, &quot;51.4&quot;, &quot;51.5&quot;,…
+## $ avg_salary             &lt;chr&gt; &quot;12541&quot;, &quot;8507&quot;, &quot;8980&quot;, &quot;9753&quot;, &quot;9307&quot;, &quot;8546…
+## $ entrepreneur_1000      &lt;chr&gt; &quot;167&quot;, &quot;132&quot;, &quot;111&quot;, &quot;109&quot;, &quot;118&quot;, &quot;126&quot;, &quot;130…
+## $ Population500          &lt;dbl&gt; 0, 80, 55, 63, 65, 60, 38, 95, 61, 55, 35, 84,…
+## $ Population500to1999    &lt;dbl&gt; 0, 26, 26, 29, 30, 23, 28, 19, 23, 29, 36, 29,…
+## $ Population2000to9999   &lt;dbl&gt; 0, 6, 4, 6, 4, 4, 1, 7, 4, 4, 9, 6, 1, 10, 7, …
+## $ Population10000        &lt;dbl&gt; 1, 2, 1, 2, 1, 2, 3, 1, 2, 3, 0, 1, 1, 1, 1, 1…
+## $ unemployment_rate_1995 &lt;dbl&gt; 0.2, 1.6, 1.9, 4.6, 3.8, 2.9, 2.2, 1.2, 3.3, 0…
+## $ unemployment_rate_1996 &lt;dbl&gt; 0.43, 1.85, 2.21, 5.05, 4.43, 4.02, 2.87, 1.44…
+## $ commited_crimes_1995   &lt;dbl&gt; 85677, 2159, 2824, 5244, 2616, 2640, 4289, 517…
+## $ commited_crimes_1996   &lt;dbl&gt; 99107, 2674, 2813, 5892, 3040, 3120, 4846, 498…</code></pre>
+<pre class="r"><code># remove [ &amp; ] by replacing it with blank
+# below works on a single column
+# districts_r$Population500 &lt;- gsub(&quot;\\[&quot;, &quot;&quot;, districts_r$Population500)
+
+# write.csv(districts_r, &quot;districts_r.csv&quot;)</code></pre>
+</div>
+<div id="customers" class="section level2">
+<h2>customers</h2>
+<pre class="r"><code>##############################################################################################################
+####################################### 1. Ingesting data ####################################################
+##############################################################################################################
+
+# accounts contains information about the bank&#39;s accounts.
+accounts &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/accounts.csv&quot;)
+#head(accounts)
+
+# clients contain information about the bank&#39;s customers. A client (customer) can have several accounts.
+clients &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/clients.csv&quot;)
+#head(clients)
+
+# links contains information that links customers to accounts, 
+# and whether a customer is the owner or a user in a given account.
+links &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/links.csv&quot;)
+#head(links)
+
+# transactions contains all of the bank&#39;s transactions.
+transactions &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/transactions.csv&quot;)
+# head(transactions)
+
+# payment_orders contains information about orders for payments to other banks via bank transfers. 
+# A customer issues an order for payment and the bank executes the payment. 
+# These payments should also be reflected in the transactions.csv data as debits.
+payment_orders &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/payment_orders.csv&quot;)
+# head(payment_orders)
+
+# cards contains information about credit cards issued to clients. 
+# Accounts can have more than one credit card.
+cards &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/data/cards.csv&quot;)
+# head(cards)
+
+# loans contains information about loans associated with accounts. 
+# Only one loan is allowed per account.
+loans &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/results/loans_r.csv&quot;)
+loans &lt;- loans %&gt;%
+  select(-X1)
+# head(loans)
+
+# districts contains demographic information and characteristics about the districts 
+# where customers and branches are located.
+districts &lt;- read_csv(&quot;/Users/xinlu/Downloads/Academics/01 GU Courses/2020 Fall/ANLY503/02HW/HW4/results/districts_r.csv&quot;)
+districts &lt;- districts %&gt;%
+  select(-X1)
+# head(districts)
+
+
+##############################################################################################################
+####################################### 2. Cleaning data #####################################################
+##############################################################################################################
+
+# Build an analytical dataset by combining (joining) the data from the different tables as you see fit, 
+# which will be used for the purposes of exploratory data analysis, visualization and reporting. 
+# The unit of analysis is the account. 
+# This dataset must contain the following information for each account using the following field names:
+# 
+# account_id: Account number      &lt;- accounts.id
+# open_date: Date when account was opened     &lt;- accounts.date
+# statement_frequency: The frequency that statements are generated for the account   
+# &lt;- accounts.statement_frequency
+
+# district_name: Name of the district where the account is     
+# &lt;- districts.name, accounts.district_id = districts_r.id
+# create a new df that has everything in accounts, and only district name from districts
+# accounts left joins districts on accounts.district_id = districts_r.id
+
+customers &lt;- accounts %&gt;%
+  left_join(districts[, c(&quot;id&quot;, &quot;name&quot;)], by = c(&quot;district_id&quot; = &quot;id&quot;)) %&gt;%
+  rename(district_name = name) %&gt;%
+  select(-district_id)
+
+
+# num_customers: The total number of clients associated with the account (owner and users) 
+# &lt;- count(links.client_id) accounts.id = links.account_id
+
+customers &lt;- links %&gt;%
+  count(account_id, name = &quot;num_customers&quot;) %&gt;% # group_by account_id and count total clients
+  right_join(customers, by = c(&quot;account_id&quot;=&quot;id&quot;))
+
+
+# credit_cards: Number of credit cards for an account or zero if none  
+# &lt;- count(cards.id) cards.link_id = links.id, links.account_id = accounts.id
+# note links need to be joined as well
+customers &lt;- links %&gt;%
+  inner_join(cards, by=c(&quot;id&quot; = &quot;link_id&quot;)) %&gt;%
+  count(account_id, name = &quot;credit_cards&quot;) %&gt;% #group_by account_id and count total clients
+  right_join(customers, by=&quot;account_id&quot;) %&gt;%
+  mutate(credit_cards = ifelse(is.na(credit_cards), 0, credit_cards))
+
+
+# to replace NA with 0 in the entire df, use either of below 2 options:
+# customers[is.na(customers$credit_cards)] &lt;- 0
+# df %&gt;% mutate_each( funs_( interp( ~replace(., is.na(.),0) ) ) )
+
+# loan: T/F if the account has a loan  
+# &lt;- accounts.id = loans_r.id
+# assume loans.id is the account_id
+# since loan does not exist in any df 
+# need to create a new column loan, which will depend on values in other columns in loans df
+customers$loan = NA
+
+# loan_amount: The amount of the loan if there is one, NA if none  &lt;- loans.amount, accounts.id = loans_r.id
+# loan_payments: The amount of the loan payment if there is one, NA if none   &lt;- loans.payments, accounts.id = loans_r.id
+# loan_term: The duration of loan in months, NA if none  &lt;- 
+# loan_status: The status of the loan (current or expired), NA if none
+# loan_default: T/F if the loan is in default, or NA if none
+customers &lt;- customers %&gt;%
+  left_join(loans[, c(&quot;account_id&quot;, &quot;amount&quot;, &quot;payments&quot;, &quot;loan_term&quot;, &quot;loan_status&quot;, &quot;loan_default&quot;)], by = &quot;account_id&quot;) %&gt;%
+  rename(loan_amount = amount, loan_payments = payments, open_date = date) %&gt;% # rename column names, note its new_name=old_name, not the other way around
+  mutate(loan = ifelse(is.na(loan_amount), &quot;F&quot;, &quot;T&quot;)) # fill values into new column loan
+
+
+# max_withdrawal: Maximum amount withdrawn for the account
+# min_withdrawal: Minimum amount withdrawn for the account
+
+# transactions %&gt;%
+#   select(account_id, type, amount) %&gt;%
+#   group_by(account_id, type) %&gt;%
+#   filter(type == &#39;credit&#39;, amount == max(amount)) %&gt;%
+#   glimpse()
+# 
+# transactions %&gt;%
+#   select(account_id, type, amount) %&gt;%
+#   group_by(account_id, type) %&gt;%
+#   slice(type == &#39;credit&#39;, which.max(amount)) %&gt;%
+#   glimpse()
+
+customers &lt;- transactions %&gt;% 
+  filter(type == &#39;debit&#39;) %&gt;% # debit == withdrawl
+  group_by(account_id) %&gt;%
+  summarize(min_withdrawal = min(amount), max_withdrawal = max(amount)) %&gt;%
+  right_join(customers, by=&quot;account_id&quot;)
+
+# transactions %&gt;% glimpse()
+# cc_payments: Count of credit payments for the account for all cards
+customers &lt;- transactions %&gt;%
+  filter(type==&#39;credit&#39;) %&gt;%
+  count(account_id, name = &quot;cc_payments&quot;) %&gt;%
+  right_join(customers, by=&quot;account_id&quot;)
+
+# max_balance: Maximum balance in the account
+# min_balance: Minimum balance in the account
+customers &lt;- transactions %&gt;%
+  group_by(account_id) %&gt;%
+  summarize(min_balance = min(balance), max_balance = max(balance)) %&gt;%
+  right_join(customers, by=&quot;account_id&quot;)
+
+customers %&gt;% glimpse()</code></pre>
+<pre><code>## Rows: 4,500
+## Columns: 17
+## $ account_id          &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…
+## $ min_balance         &lt;dbl&gt; 1000, 1100, 1000, 800, 600, 900, 900, 900, 400, 1…
+## $ max_balance         &lt;dbl&gt; 30415, 69302, 53447, 34870, 32036, 51879, 99675, …
+## $ cc_payments         &lt;int&gt; 102, 152, 46, 65, 35, 99, 51, 84, 183, 59, 79, 39…
+## $ min_withdrawal      &lt;dbl&gt; 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 1…
+## $ max_withdrawal      &lt;dbl&gt; 7500, 42000, 7400, 5250, 5100, 11600, 25800, 4080…
+## $ credit_cards        &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0…
+## $ num_customers       &lt;int&gt; 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 2…
+## $ open_date           &lt;date&gt; 1995-03-24, 1993-02-26, 1997-07-07, 1996-02-21, …
+## $ statement_frequency &lt;chr&gt; &quot;monthly&quot;, &quot;monthly&quot;, &quot;monthly&quot;, &quot;monthly&quot;, &quot;mont…
+## $ district_name       &lt;chr&gt; &quot;Pisek&quot;, &quot;Hl.m. Praha&quot;, &quot;Kolin&quot;, &quot;Pribram&quot;, &quot;Cesk…
+## $ loan                &lt;chr&gt; &quot;F&quot;, &quot;T&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;,…
+## $ loan_amount         &lt;dbl&gt; NA, 80952, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ loan_payments       &lt;dbl&gt; NA, 3373, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+## $ loan_term           &lt;dbl&gt; NA, 24, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+## $ loan_status         &lt;chr&gt; NA, &quot;expired&quot;, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ loan_default        &lt;lgl&gt; NA, FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…</code></pre>
+<pre class="r"><code># save the result as a csv
+# write.csv(customers, &quot;customers_r.csv&quot;)</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -11,8 +11,10 @@ navbar:
       href: dashboard.html
     - text: "All Graphs & Discussions"
       href: finalproject.html
-    - text: "Homework 4 & 5 & 6"
-      href: hw4_5_6.html
+    - text: "Homework 4"
+      href: HW4.html
+    - text: "Homework 5"
+      href: ANLY503_HW5_Xin_Lu.html
     - text: "Homework 7"
       href: networks.html
 output:

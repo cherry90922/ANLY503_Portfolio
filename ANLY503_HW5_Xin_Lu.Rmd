@@ -1,0 +1,357 @@
+---
+title: "ANLY503_HW5_Xin_Lu"
+author: "Xin"
+date: "12/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Explore all accounts. 
+Create visualizations that combine all these account characteristics:
+* Whether an account has a credit card or not
+* Whether an account has a loan or not
+* The average balance for the account
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = F}
+library(tidyverse)
+# install.packages("naniar")
+library(naniar)
+library(dplyr)
+accounts <- read_csv("/Users/xinlu/anly503-fall2020-a5-cherry90922/data/accounts_analytical.csv")
+# accounts %>% glimpse()
+
+transactions <- read_csv("/Users/xinlu/anly503-fall2020-a5-cherry90922/data/transactions.csv")
+# transactions %>% glimpse()
+```
+
+### Data preparation
+Data preparation before visualizations, which includes 3 steps: create a column to indicate the loan & credit card status of an account, calculate the average balance per account, and create a sequential id
+```{r data prep, message = FALSE, warning = FALSE, echo = F, results = F}
+# create a column to indicate the loan & credit card status of an account:
+# whether the accounts has both credit_cards & loans, has either loans or credit cards, and has neither
+accounts$has_credit_cards_loans = NULL
+accounts <- accounts %>%
+  mutate(has_credit_cards_loans = ifelse(is.na(credit_cards) & is.na(loan_date), "Neither", 
+                                         ifelse(is.na(credit_cards) & !is.na(loan_date), "has_loans", 
+                                                ifelse(!is.na(credit_cards) & is.na(loan_date), "has_credit_card", "Both"))))
+
+# average balance per account, assuming it's asking average balance for all the transactions per account:
+# summing all the balances per account divided by total number of transactions
+accounts <- transactions %>% 
+  group_by(account_id) %>%
+  summarize(avg_balance = mean(balance, na.rm = TRUE)) %>%
+  right_join(accounts, by = 'account_id')
+
+# another way to calculate average
+# aggregate(transactions$balance,
+#           by = list(transactions$account_id),
+#           FUN = mean)
+
+# since account_id is not sequential and there are some skipped account numbers, which can be misleading
+# a new sequential id is generated to show loan distribution of each account.
+accounts$id <- seq.int(nrow(accounts))
+
+accounts %>% glimpse()
+```
+
+### Data visualization
+From the 1st graph, which shows the average balance per account per credit card & loan status, we can see credit cards were mainly issued to 2 groups of account id. It can be misunderstood as issuing many credit cards during a specific time period, which isn't because in the second graph, I plotted everything on acct_creation_date (credit card issue date is NA) and found out the credit card issuance is very even throughout the time. Also from the 1st graph, we can see there is no significant difference in account balance whether an account has credit cards, loans or not, although most accounts have neither credit cards nor or loans.
+```{r visualizations, message = FALSE, warning = FALSE, echo = F, results = T}
+# 1st graph
+ggplot(data = accounts,
+       mapping = aes(
+         x = id,
+         y = avg_balance
+       )) +
+  geom_point(
+    mapping = aes(color = has_credit_cards_loans),
+    size = 2,
+    show.legend = FALSE) +
+  facet_wrap(~has_credit_cards_loans) +
+  theme_bw() +
+  labs(x = 'account_id',
+       y = 'average balance',
+       title = "Account average balance per credit card & loan status",
+       subtitle = "4,500 accounts with loans from 1993 to 1998") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        strip.text = element_text(size = 12))
+
+# 2nd graph
+ggplot(data = accounts,
+       mapping = aes(
+         x = acct_creation_date,
+         y = avg_balance
+       )) +
+  geom_point(
+    mapping = aes(color = has_credit_cards_loans),
+    size = 2,
+    show.legend = FALSE) +
+  facet_wrap(~has_credit_cards_loans) +
+  theme_bw() +
+  labs(x = 'acct_creation_date',
+       y = 'average balance',
+       title = "Account average balance per credit card & loan status",
+       subtitle = "4,500 accounts with loans from 1993 to 1998") +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        strip.text = element_text(size = 12))
+  
+```
+
+
+
+## 2. What is the distribution of all loans and what are their characteristics?
+There are 6 columns related to loans, loan_date, loan_amount, loan_payment, loan_term, loan_status and loan_default. I will look at each column individually and some columns collectively and create graphs shown below to illustrate my findings.  
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = F}
+library(tidyverse)
+# install.packages("naniar")
+library(naniar)
+accounts <- read_csv("/Users/xinlu/anly503-fall2020-a5-cherry90922/data/accounts_analytical.csv")
+accounts %>% glimpse()
+
+transactions <- read_csv("/Users/xinlu/anly503-fall2020-a5-cherry90922/data/transactions.csv")
+transactions %>% glimpse()
+```
+
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = F}
+# na.omit(accounts) %>% select(loan_amount, loan_payment)
+```
+
+2.1 First I look at if the general situation with loans, such as how many loans in total, if all accounts have loans or only a few accounts have loans. We can tell from the graph below that the majority of accounts (`r round(length(which(is.na(accounts$loan_date)))/length(accounts$loan_date),2)`) don't have loans, represented by the missing value percentage of column loan_date.  
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+gg_miss_var(accounts, show_pct=T) + # show_pct=T shows proportion of missing
+  labs(y = "Percentage of missing values") +
+  ylim(0,100) +
+  theme_bw()
+```
+
+2.2 Next I look at loan_date and see if there is any general trend, like loans are increasing over the years, and if there is any seasonality, such as there is more loans applied/approved in April each year etc.  
+We can see from the graph below that the total loan_amount increases from 1993 to 1998, but there is no obvious seasonal trend identified. Total loan amounts can vary significantly from month to month in some year (y.1997), and sometimes they are pretty steady throughout the year (y.1995)  
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+library(scales)
+ggplot(
+  data = accounts,
+  mapping = aes(
+    x = format(accounts$loan_date, "%m"),
+    y = loan_amount
+  )
+) +
+  geom_bar(stat = "identity")+
+  # scale_x_date(labels = date_format("%Y")) + 
+  facet_wrap(~format(accounts$loan_date, "%Y"), scales=("free_x")) + 
+  theme_bw() +
+  labs(x="Month", y="loan_amount")
+  
+```
+
+2.3 Thirdly I look at loan_payment, its overall distributions and percentage of loans paid. From the first graph, which shows the loan_payment of each account with a scatter plot, the distribution of loan_payment is scattered around without any discernible patterns. The range of loan_payment is between 0-10,000.  
+From the second graph, which shows the percentage of loan paid by account, we can see there are only 5 percentages, well below 10%, meaning all accounts only paid less than 10% of their total loan, which is a bit weird.  
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+# since account_id is not sequential and there are some skipped account numbers, which can be misleading
+# a new sequential id is generated to show loan distribution of each account.
+accounts$id <- seq.int(nrow(accounts))
+
+# 1st graph: shows loan_payment of each account using scatter plot
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),],
+  mapping = aes(
+    x = id,
+    y = loan_payment
+  )
+) +
+  geom_point()+
+  labs(x="each account", y="loan_payment",
+       title = 'loan_payment of each account')
+
+# second graph
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),],
+  mapping = aes(
+    x = id,
+    y = loan_payment/loan_amount
+  )
+) +
+  geom_point()+
+  labs(x="each account", y="loan_payment", title = '% of loan paid') +
+  ylim(0,0.1)
+```
+
+2.4 Next I look at loan_term and its distributions. Per graph 1, which shows count of loan_term, we can see each loan_term is very balanced, there are about the same number of accounts in each category of loan_terms. Per graph 2, which shows sum of loan_amount per loan_term, illustrates that the longer the loan term, the bigger the loan amount. It makes sense because longer terms usually means customers are getting a bigger loan so they can even out the payment each month.  
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+# graph 1:
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = factor(loan_term)), 
+    fill = color
+) +
+  geom_bar()+
+  # scale_x_date(labels = date_format("%Y")) + 
+  #facet_wrap(~loan_term) + 
+  theme_bw() +
+  labs(x="loan_term", y="count(account_id)", title = 'count of loan_term')
+
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = factor(loan_term), 
+    y = loan_amount
+)) +
+  stat_summary(fun.y = sum, geom = 'bar')+
+  theme_bw() +
+  labs(x="loan_term", y="sum(loan_amount)", title = 'sum of loan_amount per loan_term')
+```
+
+2.5 Onto loan_status, from the graph below we can see most loans are current, almost double the size of expired loans.  
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+# graph 1:
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = loan_status
+)) +
+  geom_bar()+
+  # scale_x_date(labels = date_format("%Y")) + 
+  #facet_wrap(~loan_term) + 
+  theme_bw() +
+  labs(x="loan_status", y="count(account_id)", title = 'count of loan_status')
+```
+
+2.6 Finally onto loan_default. It's a good sign that the majority of loans are not default and only a small proportionf of loans are dafault.  
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+ggplot(
+  data = accounts[!(is.na(accounts$loan_date)),], # this is to get rid of plotting NA
+  mapping = aes(
+    x = loan_default
+)) +
+  geom_bar()+
+  # scale_x_date(labels = date_format("%Y")) + 
+  #facet_wrap(~loan_term) + 
+  theme_bw() +
+  labs(x="loan_default", y="count(account_id)", title = 'count of loan_default')
+```
+
+
+## 3
+
+3. Is there a relationship between a good or bad loan and the time between an account is opened and the loan is created? Is there a specific set of accounts that seem to be at higher or lower risk of defaulting?
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = F}
+library(tidyverse)
+# install.packages("naniar")
+accounts <- read_csv("/Users/xinlu/anly503-fall2020-a5-cherry90922/data/accounts_analytical.csv")
+
+
+# for this task we only need to look at 1. accounts that have a loan and 2. all loan related variables plus account_id
+accounts <- accounts %>% 
+  filter(!is.na(loan_date)) %>%
+  select(c(account_id, acct_creation_date, loan_date, loan_amount, loan_payment, loan_term, loan_status, loan_default))
+
+# create a new variable to calculate the time difference between loan created date and account open date
+# although loan default may not be related to neither acct_creation_date nor loan_date, 
+# it may be related to the difference of the 2
+accounts$time_diff_acct_loan <- accounts$loan_date - accounts$acct_creation_date
+
+accounts %>% glimpse()
+
+# transactions <- read_csv("data/transactions.csv")
+# transactions %>% glimpse()
+```
+
+To find out if there is a relationship between a good or bad loan and the time between an account is opened and the loan is created, I need to perform a bivariate relations, which is looking at the relationship between 2 numeric variables through scatter plots.  
+From the scatter plot we can see there isn't a very obvious relationship between the 3 variables, because the dots of good and bad loans are almost even distributed on both sides of the line. It's not like the default loans are more concentrated on loans that were opened early which would then yield a steeper line than the line now.  
+Then I look at the relationship between variable loan_default and time_diff_acct_loan, which is the time difference between loan created date and account open date. Although loan default may not be related to neither acct_creation_date nor loan_date, it may be related to the difference of the 2. From the boxplot below, we can see that the default loans tend to have a shorter time difference than the loans that are not in default. But the difference is very subtle and I don't think it's significant.  
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+# Bivariate relations
+ggplot(accounts, aes(x = acct_creation_date, y = loan_date, color = loan_default))+
+  geom_point() + 
+  geom_smooth() +
+  labs(title = "Relationship between loan_default & the time between an account is opened and the loan is created") +
+  theme_bw()
+
+# Relating a continuous to a categorical variable
+ggplot(accounts, aes(x = loan_default, y = time_diff_acct_loan))+
+  geom_boxplot()+
+  labs(title="Relationship between loan_default & the time difference between an account is opened and the loan is created")
+```
+
+Since there is no significant relationship between loan default, acct_creation_date, loan_date or time_diff_acct_loan, I move on to other finding relationships between loan default and other loan related variables that can be used to determine what accounts that seem to be at higher or lower risk of defaulting.  
+I plotted all of the rest of loan related variables against loan default with both scatterplots and boxplots, and finally found 2 variables that seem to have a strong relationship with laon default, and that are loan_amount and loan_payment. Let me explain with loan_amount. From the graph below, we can see default loans have a higher amount than non-default loans, so the accounts with a higher amount tend to have a high risk of default.
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+ggplot(accounts, aes(x = loan_default, y = loan_amount))+
+  geom_boxplot() + 
+  labs(title = "Relationship between loan_default & loan_amount")
+```
+
+## 4.
+4. For the account with the highest number of transactions, make a time series line plot for the behavior of the account over time, including all debits and credits, the different methods, and the with the different categories.
+St4ep 4 is skipped here because my local RStudio crushes everytime I try to run Python in it. 
+
+## 5
+5. Explore the validity of the data for the case whether or not an account has a credit card and whether or not they have associated credit card transactions. Is there anything worth noting?
+
+```{r data read & prep, message = FALSE, warning = FALSE, echo = F, results = T}
+library(tidyverse)
+accounts <- read_csv("/Users/xinlu/anly503-fall2020-a5-cherry90922/data/accounts_analytical.csv")
+transactions <- read_csv("/Users/xinlu/anly503-fall2020-a5-cherry90922/data/transactions.csv")
+# for this task we only need to look at all credit card related variables plus account_id
+# update na in credit_cards to 0 & 1, meaning the account has no credit card (0) and has credit card (1)
+# I don't care about how many credit cards they have
+accounts <- accounts %>% 
+  select(c(account_id, credit_cards, starts_with("debit_credit_card"))) %>%
+  mutate(credit_cards = ifelse(is.na(credit_cards), 0, 1))
+         
+# add a sequential ID to replace account_id
+accounts$id = seq.int(nrow(accounts))
+
+accounts$credit_cards = as.character(accounts$credit_cards)
+
+accounts %>% glimpse()
+```
+
+One things that's worth noting from all three graphs below is that many accounts that don't have associated credit cards have debit transactions from credit cards. Some of those transactions have a very high dollar amount and are very frequent.  
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+ggplot(accounts, aes(x = id, y = debit_credit_card_other_txn_ct, color = credit_cards))+
+  geom_point() + 
+  labs(x = 'account_id',
+       y = 'credit card transaction count',
+       title = "Whether an account has a credit card and the account's credit card transactions") +
+  theme_bw()
+
+ggplot(accounts, aes(x = id, y = debit_credit_card_other_avg_txn, color = credit_cards))+
+  geom_point() + 
+  labs(x = 'account_id',
+       y = 'average credit card transaction amount',
+       title = "Whether an account has a credit card and the account's average credit card transaction amount") +
+  theme_bw()
+```
+
+In order to find our why, I join the transactions and accounts together because transactions have details on the method. I want to make sure these transactions are indeed credit card transactions and are not mistakes coming from transactions into accounts. So I extracted all the accounts that don't have a credit card but have credit transactions, and find those account_id in transactions to see if there are transactions with method='credit card'. And there are quite a few transactions.
+
+```{r, message = FALSE, warning = FALSE, echo = F, results = F}
+account_wo_credit_cards <- accounts %>%
+  filter(credit_cards == '0' & !is.na(debit_credit_card_other_txn_ct)) %>%
+  inner_join(transactions, by='account_id') %>%
+  filter(method == 'credit card')
+```
+
+From the graph below, we can see there are quite a few cases when an account don't have any credit cards yet have many credit card related transactions. Why this is happening is beyond my understanding. I can't think of any reason other than there is a mistake categorizing the credit card transactions. Maybe some transactions are not credit card associated transactions but in the system somehow are categorized as credit card transactions. Or those accounts actually have credit cards with other banks but the system in this bank does not know that so it still thinks these accounts have no credit cards. Otherwise it wouldn't be so many cases.
+```{r, message = FALSE, warning = FALSE, echo = F, results = T}
+ggplot(account_wo_credit_cards, aes(x = account_id, y = amount))+
+  geom_point() + 
+  labs(x = 'account_id',
+       y = 'credit card transaction amount',
+       title = "Credit card transactions for accounts that don't have a credit card") +
+  theme_bw()
+```
+

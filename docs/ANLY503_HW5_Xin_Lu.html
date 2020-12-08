@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xin" />
+
+
+<title>ANLY503_HW5_Xin_Lu</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Xin Lu's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="dashboard.html">Final Project Dashboard</a>
+</li>
+<li>
+  <a href="finalproject.html">All Graphs &amp; Discussions</a>
+</li>
+<li>
+  <a href="HW4.html">Homework 4</a>
+</li>
+<li>
+  <a href="ANLY503_HW5_Xin_Lu.html">Homework 5</a>
+</li>
+<li>
+  <a href="networks.html">Homework 7</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ANLY503_HW5_Xin_Lu</h1>
+<h4 class="author">Xin</h4>
+<h4 class="date">12/8/2020</h4>
+
+</div>
+
+
+<div id="explore-all-accounts." class="section level2">
+<h2>1. Explore all accounts.</h2>
+<p>Create visualizations that combine all these account characteristics: * Whether an account has a credit card or not * Whether an account has a loan or not * The average balance for the account</p>
+<div id="data-preparation" class="section level3">
+<h3>Data preparation</h3>
+<p>Data preparation before visualizations, which includes 3 steps: create a column to indicate the loan &amp; credit card status of an account, calculate the average balance per account, and create a sequential id</p>
+</div>
+<div id="data-visualization" class="section level3">
+<h3>Data visualization</h3>
+<p>From the 1st graph, which shows the average balance per account per credit card &amp; loan status, we can see credit cards were mainly issued to 2 groups of account id. It can be misunderstood as issuing many credit cards during a specific time period, which isn’t because in the second graph, I plotted everything on acct_creation_date (credit card issue date is NA) and found out the credit card issuance is very even throughout the time. Also from the 1st graph, we can see there is no significant difference in account balance whether an account has credit cards, loans or not, although most accounts have neither credit cards nor or loans. <img src="ANLY503_HW5_Xin_Lu_files/figure-html/visualizations-1.png" width="672" /><img src="ANLY503_HW5_Xin_Lu_files/figure-html/visualizations-2.png" width="672" /></p>
+</div>
+</div>
+<div id="what-is-the-distribution-of-all-loans-and-what-are-their-characteristics" class="section level2">
+<h2>2. What is the distribution of all loans and what are their characteristics?</h2>
+<p>There are 6 columns related to loans, loan_date, loan_amount, loan_payment, loan_term, loan_status and loan_default. I will look at each column individually and some columns collectively and create graphs shown below to illustrate my findings.</p>
+<p>2.1 First I look at if the general situation with loans, such as how many loans in total, if all accounts have loans or only a few accounts have loans. We can tell from the graph below that the majority of accounts (0.85) don’t have loans, represented by the missing value percentage of column loan_date.<br />
+<img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>2.2 Next I look at loan_date and see if there is any general trend, like loans are increasing over the years, and if there is any seasonality, such as there is more loans applied/approved in April each year etc.<br />
+We can see from the graph below that the total loan_amount increases from 1993 to 1998, but there is no obvious seasonal trend identified. Total loan amounts can vary significantly from month to month in some year (y.1997), and sometimes they are pretty steady throughout the year (y.1995)</p>
+<p><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>2.3 Thirdly I look at loan_payment, its overall distributions and percentage of loans paid. From the first graph, which shows the loan_payment of each account with a scatter plot, the distribution of loan_payment is scattered around without any discernible patterns. The range of loan_payment is between 0-10,000.<br />
+From the second graph, which shows the percentage of loan paid by account, we can see there are only 5 percentages, well below 10%, meaning all accounts only paid less than 10% of their total loan, which is a bit weird.</p>
+<p><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<p>2.4 Next I look at loan_term and its distributions. Per graph 1, which shows count of loan_term, we can see each loan_term is very balanced, there are about the same number of accounts in each category of loan_terms. Per graph 2, which shows sum of loan_amount per loan_term, illustrates that the longer the loan term, the bigger the loan amount. It makes sense because longer terms usually means customers are getting a bigger loan so they can even out the payment each month.</p>
+<p><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<p>2.5 Onto loan_status, from the graph below we can see most loans are current, almost double the size of expired loans.</p>
+<p><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>2.6 Finally onto loan_default. It’s a good sign that the majority of loans are not default and only a small proportionf of loans are dafault.<br />
+<img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="section" class="section level2">
+<h2>3</h2>
+<ol start="3" style="list-style-type: decimal">
+<li>Is there a relationship between a good or bad loan and the time between an account is opened and the loan is created? Is there a specific set of accounts that seem to be at higher or lower risk of defaulting?</li>
+</ol>
+<p>To find out if there is a relationship between a good or bad loan and the time between an account is opened and the loan is created, I need to perform a bivariate relations, which is looking at the relationship between 2 numeric variables through scatter plots.<br />
+From the scatter plot we can see there isn’t a very obvious relationship between the 3 variables, because the dots of good and bad loans are almost even distributed on both sides of the line. It’s not like the default loans are more concentrated on loans that were opened early which would then yield a steeper line than the line now.<br />
+Then I look at the relationship between variable loan_default and time_diff_acct_loan, which is the time difference between loan created date and account open date. Although loan default may not be related to neither acct_creation_date nor loan_date, it may be related to the difference of the 2. From the boxplot below, we can see that the default loans tend to have a shorter time difference than the loans that are not in default. But the difference is very subtle and I don’t think it’s significant.<br />
+<img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p>Since there is no significant relationship between loan default, acct_creation_date, loan_date or time_diff_acct_loan, I move on to other finding relationships between loan default and other loan related variables that can be used to determine what accounts that seem to be at higher or lower risk of defaulting.<br />
+I plotted all of the rest of loan related variables against loan default with both scatterplots and boxplots, and finally found 2 variables that seem to have a strong relationship with laon default, and that are loan_amount and loan_payment. Let me explain with loan_amount. From the graph below, we can see default loans have a higher amount than non-default loans, so the accounts with a higher amount tend to have a high risk of default. <img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="section-1" class="section level2">
+<h2>4.</h2>
+<ol start="4" style="list-style-type: decimal">
+<li>For the account with the highest number of transactions, make a time series line plot for the behavior of the account over time, including all debits and credits, the different methods, and the with the different categories. St4ep 4 is skipped here because my local RStudio crushes everytime I try to run Python in it.</li>
+</ol>
+</div>
+<div id="section-2" class="section level2">
+<h2>5</h2>
+<ol start="5" style="list-style-type: decimal">
+<li>Explore the validity of the data for the case whether or not an account has a credit card and whether or not they have associated credit card transactions. Is there anything worth noting?</li>
+</ol>
+<pre><code>## Rows: 4,500
+## Columns: 6
+## $ account_id                      &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12…
+## $ credit_cards                    &lt;chr&gt; &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;0&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1…
+## $ debit_credit_card_other_txn_ct  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0…
+## $ debit_credit_card_other_txn_tot &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 5900, 0, 0, 0, 0, 0…
+## $ debit_credit_card_other_avg_txn &lt;dbl&gt; 0.000, 0.000, 0.000, 0.000, 0.000, 0.…
+## $ id                              &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12…</code></pre>
+<p>One things that’s worth noting from all three graphs below is that many accounts that don’t have associated credit cards have debit transactions from credit cards. Some of those transactions have a very high dollar amount and are very frequent.<br />
+<img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-13-1.png" width="672" /><img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
+<p>In order to find our why, I join the transactions and accounts together because transactions have details on the method. I want to make sure these transactions are indeed credit card transactions and are not mistakes coming from transactions into accounts. So I extracted all the accounts that don’t have a credit card but have credit transactions, and find those account_id in transactions to see if there are transactions with method=‘credit card’. And there are quite a few transactions.</p>
+<p>From the graph below, we can see there are quite a few cases when an account don’t have any credit cards yet have many credit card related transactions. Why this is happening is beyond my understanding. I can’t think of any reason other than there is a mistake categorizing the credit card transactions. Maybe some transactions are not credit card associated transactions but in the system somehow are categorized as credit card transactions. Or those accounts actually have credit cards with other banks but the system in this bank does not know that so it still thinks these accounts have no credit cards. Otherwise it wouldn’t be so many cases. <img src="ANLY503_HW5_Xin_Lu_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
